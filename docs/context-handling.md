@@ -16,7 +16,7 @@ Configure accounts and authorized source locations in ignored `sources.local.md`
 
 `synthesis.py` reads classified usage-tracker JSONL files, not raw assistant conversation transcripts. Supply `--root /path/to/logs` or set `CHIEF_OF_STAFF_LOG_DIR`. The default is `~/.local/share/chief-of-staff/activity-logs`. This repository includes no collector or historical logs.
 
-Use `python3 synthesis.py --days N` for activity grouped by project. If the log root is missing or unreadable, report the material evidence gap. Never interpret missing logs as a quiet day. With no tracker, work from supplied context and other authorized evidence. Session logs capture only assisted work; missing Slack, meetings, or offline activity does not establish a stall.
+Use `python3 scripts/synthesis.py --days N` for activity grouped by project. If the log root is missing or unreadable, report the material evidence gap. Never interpret missing logs as a quiet day. With no tracker, work from supplied context and other authorized evidence. Session logs capture only assisted work; missing Slack, meetings, or offline activity does not establish a stall.
 
 ### Meetings and sessions
 
@@ -93,8 +93,8 @@ Use the [project status template](../templates/project-status.md). Project agent
 
 ## Structured context pilot
 
-Selected project records and `people/*.md` contain relationships described in [CONTEXT.md](../CONTEXT.md). Other context remains valid without them. `stakeholders.md` retains navigation and unmoved profiles. Follow a moved person's canonical overview link; do not recreate their profile in the overview. Formal reporting belongs in the sourced org map and coaching patterns in `team/`.
+Selected project records and `people/*.md` contain relationships described in [structured context](structured-context.md). Other context remains valid without them. `stakeholders.md` retains navigation and unmoved profiles. Follow a moved person's canonical overview link; do not recreate their profile in the overview. Formal reporting belongs in the sourced org map and coaching patterns in `team/`.
 
-Use `knowledge/context-index.md` or `python3 context.py show "exact name or id"` to locate selected relationships and supporting sections. Read relevant prose before drawing an advisory conclusion. The index is partial; a missing entry does not establish absence. Source dates remain meaningful, and proposed relations do not establish accepted ownership or deployed behavior.
+Use `knowledge/context-index.md` or `python3 scripts/context.py show "exact name or id"` to locate selected relationships and supporting sections. Read relevant prose before drawing an advisory conclusion. The index is partial; a missing entry does not establish absence. Source dates remain meaningful, and proposed relations do not establish accepted ownership or deployed behavior.
 
-When a material writeback changes an indexed record, reconcile prose and affected relationships in the same edit. Store each relationship once on its source record. Rebuild with `python3 context.py index --write`, then run `python3 context.py validate`. Do not expand the vocabulary or convert records merely to fill the index.
+When a material writeback changes an indexed record, reconcile prose and affected relationships in the same edit. Store each relationship once on its source record. Rebuild with `python3 scripts/context.py index --write`, then run `python3 scripts/context.py validate`. Do not expand the vocabulary or convert records merely to fill the index.

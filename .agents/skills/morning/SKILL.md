@@ -5,7 +5,7 @@ description: Prepare a conversational chief-of-staff morning briefing when the u
 
 # Morning briefing
 
-Help the user see where their attention matters today and why. Bring a chief-of-staff perspective on the decisions, relationships, and outcomes in play. Follow [AGENTS.md](../../../AGENTS.md) and [WRITING.md](../../../WRITING.md), using the [date and source rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root.
+Help the user see where their attention matters today and why. Bring a chief-of-staff perspective on the decisions, relationships, and outcomes in play. Follow [AGENTS.md](../../../AGENTS.md) and [writing style](../../../docs/writing-style.md), using the [date and source rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root.
 
 The user may open with loosely formed thoughts. Gather enough context to engage, then follow their thread. Do not deliver a static report merely because this workflow is called a briefing. Routine intake happens in the background; the conversation does not need a workflow announcement or a list of completed steps.
 
@@ -17,7 +17,7 @@ When Gemini email intake is enabled for a configured mailbox, follow [meeting in
 
 A failed document does not block the rest of the briefing. Explain coverage gaps that affect the read and keep failed intake retryable. No configured mailbox means no automatic mailbox search; manual ingest remains available. Leave email read state, labels, and Drive content unchanged.
 
-If classified activity logs are configured, run `python3 synthesis.py --date YYYY-MM-DD` for yesterday in the user's timezone, using the configured `--root` or `CHIEF_OF_STAFF_LOG_DIR`. A nonzero exit means missing evidence; report the gap and check the configured source. With no tracker, use supplied context and state material visibility limits. Never infer inactivity from missing logs.
+If classified activity logs are configured, run `python3 scripts/synthesis.py --date YYYY-MM-DD` for yesterday in the user's timezone, using the configured `--root` or `CHIEF_OF_STAFF_LOG_DIR`. A nonzero exit means missing evidence; report the gap and check the configured source. With no tracker, use supplied context and state material visibility limits. Never infer inactivity from missing logs.
 
 Read today's calendar through an available connector for the configured account. Reuse relevant local source archives; there is no last-24-hours meeting-folder scan. If priorities are over ten days old, treat them as potentially stale and invite a refresh when it matters. On Monday, also read the last three to five daily files and the week's calendar when available.
 

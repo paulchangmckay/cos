@@ -6,9 +6,9 @@ Email discovers the meeting; the Google document supplies the source. This optio
 
 ## 1. Resume pending work and start discovery
 
-Run `python3 meeting_intake.py status`. Resume pending message reads, failed document fetches, and current snapshots awaiting reconciliation even without new email. Completed notes-only documents remain eligible for transcript discovery after the original notification leaves the search window.
+Run `python3 scripts/meeting_intake.py status`. Resume pending message reads, failed document fetches, and current snapshots awaiting reconciliation even without new email. Completed notes-only documents remain eligible for transcript discovery after the original notification leaves the search window.
 
-Run `python3 meeting_intake.py scan-start`. It returns an ID, exact Gmail `query`, fixed `until` timestamp, and `next_page_token`. First use searches seven days. Later scans begin seven days before the last completed search's upper bound, covering missed mornings and delayed notifications. Search uses email arrival time; the meeting date and read status do not affect selection.
+Run `python3 scripts/meeting_intake.py scan-start`. It returns an ID, exact Gmail `query`, fixed `until` timestamp, and `next_page_token`. First use searches seven days. Later scans begin seven days before the last completed search's upper bound, covering missed mornings and delayed notifications. Search uses email arrival time; the meeting date and read status do not affect selection.
 
 Search only the configured mailbox. The sender policy matches `gemini-notes@google.com` or sharing notifications from `drive-shares-dm-noreply@google.com` whose subject identifies `Notes by Gemini`. Do not expand to arbitrary forwarded mail unless the user has configured that scope. Repeated authorized notifications can refer to one document.
 
@@ -16,11 +16,11 @@ Use the returned query unchanged and paginate completely. After each page, save 
 
     {"message_ids": ["synthetic-message-001"], "next_page_token": "synthetic-next-page"}
 
-Record it with `python3 meeting_intake.py scan-page --scan SCAN_ID --input transcripts/.incoming/search-page.json`. For later pages, pass `--page-token TOKEN_USED_FOR_THAT_REQUEST`. The terminal page must explicitly contain `"next_page_token": null`, even if it has no messages.
+Record it with `python3 scripts/meeting_intake.py scan-page --scan SCAN_ID --input transcripts/.incoming/search-page.json`. For later pages, pass `--page-token TOKEN_USED_FOR_THAT_REQUEST`. The terminal page must explicitly contain `"next_page_token": null`, even if it has no messages.
 
-Then run `python3 meeting_intake.py scan-finish --scan SCAN_ID`. It refuses to advance the checkpoint before the terminal page is recorded. The checkpoint is the original search upper bound, so mail arriving during pagination remains covered. Replaying an identical recorded page is harmless. After interruption, `scan-start` returns the active query and continuation token.
+Then run `python3 scripts/meeting_intake.py scan-finish --scan SCAN_ID`. It refuses to advance the checkpoint before the terminal page is recorded. The checkpoint is the original search upper bound, so mail arriving during pagination remains covered. Replaying an identical recorded page is harmless. After interruption, `scan-start` returns the active query and continuation token.
 
-If a provider token expires or replayed pages change, use `python3 meeting_intake.py scan-restart --scan SCAN_ID`. It returns a new scan ID for the same bounded query and restarts pagination. Previously discovered message IDs, document work, the old pagination record, and the completed checkpoint are preserved. Enumerate every page again under the returned ID. Never invent a successful terminal page.
+If a provider token expires or replayed pages change, use `python3 scripts/meeting_intake.py scan-restart --scan SCAN_ID`. It returns a new scan ID for the same bounded query and restarts pagination. Previously discovered message IDs, document work, the old pagination record, and the completed checkpoint are preserved. Enumerate every page again under the returned ID. Never invent a successful terminal page.
 
 Discovery completion means every matching message ID was recorded. Failed message reads, document access, and ingestion remain independently retryable after the checkpoint advances.
 
@@ -28,7 +28,7 @@ Discovery completion means every matching message ID was recorded. Failed messag
 
 Read pending messages with available Gmail tools, leaving mailbox state unchanged. Extract actual Google Docs links and document IDs. Titles and dates are lookup hints, never duplicate proof. Register each message:
 
-    python3 meeting_intake.py register-message --message-id MESSAGE_ID --document-id DOCUMENT_ID
+    python3 scripts/meeting_intake.py register-message --message-id MESSAGE_ID --document-id DOCUMENT_ID
 
 Repeat `--document-id` for multiple sources. A successfully read notification with no usable document needs `--no-document-reason` and a concrete explanation. Do not use that option for access failures. Record failed reads with `fail --message-id MESSAGE_ID --error "concrete failure"`.
 
@@ -40,7 +40,7 @@ Document IDs identify sources; message IDs provide discovery provenance. Revisio
 
 Save retrieved text as UTF-8 without paraphrasing under ignored `transcripts/.incoming/`, then call:
 
-    python3 meeting_intake.py archive --document-id DOCUMENT_ID --kind transcript --input transcripts/.incoming/retrieved.txt --version PROVIDER_REVISION --tab-id TRANSCRIPT_TAB --source-url ACTUAL_SOURCE_URL
+    python3 scripts/meeting_intake.py archive --document-id DOCUMENT_ID --kind transcript --input transcripts/.incoming/retrieved.txt --version PROVIDER_REVISION --tab-id TRANSCRIPT_TAB --source-url ACTUAL_SOURCE_URL
 
 Use `--kind notes` for generated notes. Omit optional metadata only when unavailable. Use the same extraction and serialization on later fetches so formatting churn does not masquerade as changed content. Record the source title and actual meeting date separately from retrieval time in its companion source record and durable citations; unknown dates stay unknown.
 
@@ -52,11 +52,11 @@ When reconciliation is needed, follow ingest: read relevant durable context, sep
 
 Only after archival and reconciliation succeed, run:
 
-    python3 meeting_intake.py complete --document-id DOCUMENT_ID --snapshot SNAPSHOT_ID
+    python3 scripts/meeting_intake.py complete --document-id DOCUMENT_ID --snapshot SNAPSHOT_ID
 
 The helper verifies the archive and provenance. Failure after archival remains retryable. A source that reverts to an earlier hash requires reconciliation again when it differs from the last observed version. Status shows current pending snapshots; superseded snapshots remain archived. Completion refuses an older snapshot after a newer one of that kind has been observed. Reconcile current evidence against context, preserving the earlier record and its limits. A later notes fetch never downgrades a completed transcript.
 
-Record document failures with `python3 meeting_intake.py fail --document-id DOCUMENT_ID --error "concrete failure"`. Report gaps and continue the briefing. Inaccessibility does not establish that no meetings occurred.
+Record document failures with `python3 scripts/meeting_intake.py fail --document-id DOCUMENT_ID --error "concrete failure"`. Report gaps and continue the briefing. Inaccessibility does not establish that no meetings occurred.
 
 ## Local integrity and recovery
 

@@ -5,7 +5,7 @@ description: Review evidence-based OKR progress for the user, a named team membe
 
 # Check OKRs
 
-Help the user judge progress toward intended outcomes and choose where their leadership matters next. Follow [AGENTS.md](../../../AGENTS.md) and [WRITING.md](../../../WRITING.md), using the [date and source rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root. Missing context files are normal; work from supplied evidence and identify material gaps.
+Help the user judge progress toward intended outcomes and choose where their leadership matters next. Follow [AGENTS.md](../../../AGENTS.md) and [writing style](../../../docs/writing-style.md), using the [date and source rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root. Missing context files are normal; work from supplied evidence and identify material gaps.
 
 Use the scope in the user's request: `self`, a team member's name, or `team`. Clarify when scope is unclear. Read the OKR file for the current quarter, or the quarter explicitly requested. Do not substitute the newest filename for the requested period.
 

@@ -5,7 +5,7 @@ description: Set up, resume, or refresh personal chief-of-staff context through 
 
 # Get started
 
-Follow [AGENTS.md](../../../AGENTS.md) and [WRITING.md](../../../WRITING.md), using the [date and context rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root. Help the user establish enough local context for useful advice, then work on a real decision together. No connectors or Python are required. Keep routine mechanics out of chat.
+Follow [AGENTS.md](../../../AGENTS.md) and [writing style](../../../docs/writing-style.md), using the [date and context rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root. Help the user establish enough local context for useful advice, then work on a real decision together. No connectors or Python are required. Keep routine mechanics out of chat.
 
 ## Start where the user is
 

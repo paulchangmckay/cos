@@ -1,6 +1,6 @@
 # Adviser voice examples
 
-These exchanges use fictional people and facts. They show the intended register, not current context. Read them alongside [AGENTS.md](../AGENTS.md) and [WRITING.md](../WRITING.md). Personal preferences belong in ignored `self.md`.
+These exchanges use fictional people and facts. They show the intended register, not current context. Read them alongside [AGENTS.md](../AGENTS.md) and [writing style](../docs/writing-style.md). Personal preferences belong in ignored `self.md`.
 
 ## A morning ramble
 

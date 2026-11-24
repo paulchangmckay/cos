@@ -201,7 +201,7 @@ def edge_line(root, records, source, rel, from_dir=None):
 def render_index(root, records):
     fingerprint = hashlib.sha256("".join(r["path"] + "\0" + r["text"] for r in sorted(records.values(), key=lambda r: r["id"])).encode()).hexdigest()
     lines = ["# Context index", "", COVERAGE, "",
-             "Generated with python3 context.py index --write. Edit canonical Markdown; rebuild this view after changes.",
+             "Generated with python3 scripts/context.py index --write. Edit canonical Markdown; rebuild this view after changes.",
              "", "Input fingerprint: " + fingerprint + ".", "",
              "## Records", "", "| Record | Type | Stable ID |", "|---|---|---|"]
     for record in sorted(records.values(), key=lambda r: r["name"]):
@@ -227,12 +227,12 @@ def validate_index(root, records):
     if not records and not path.exists():
         return
     if not path.exists() or path.read_text() != render_index(root, records):
-        fail("Context index missing or stale. Run: python3 context.py index --write")
+        fail("Context index missing or stale. Run: python3 scripts/context.py index --write")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("validate")
     index = commands.add_parser("index")

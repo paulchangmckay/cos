@@ -5,13 +5,13 @@ description: Write a chief-of-staff end-of-day synthesis when the user asks to c
 
 # End-of-day synthesis
 
-Make sense of the day with the user and save the account worth carrying into tomorrow. Develop a view of what changed, what it means, and which choices deserve attention. Follow [AGENTS.md](../../../AGENTS.md) and [WRITING.md](../../../WRITING.md), using the [date and source rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root.
+Make sense of the day with the user and save the account worth carrying into tomorrow. Develop a view of what changed, what it means, and which choices deserve attention. Follow [AGENTS.md](../../../AGENTS.md) and [writing style](../../../docs/writing-style.md), using the [date and source rules](../../../docs/context-handling.md#dates-and-periods). Paths below resolve from the repository root.
 
 Save a prose account to `daily/YYYY-MM-DD.md` using today's date in the user's timezone. A request for this workflow authorizes the daily file and material local writebacks under the [writeback policy](../../../docs/context-handling.md#writeback-policy). Missing local files are normal.
 
 ## Gather evidence
 
-If classified activity logs are configured, run `python3 synthesis.py --date YYYY-MM-DD` for today with the configured source. A nonzero exit means the scanner supplied no valid summary. Report the gap; proceed only from other adequate supplied or authorized local evidence, or ask for context. With no tracker, work from supplied context and local sources; ask only if there is too little evidence to write a truthful account. State the account's evidence coverage. Missing logs never mean a quiet day.
+If classified activity logs are configured, run `python3 scripts/synthesis.py --date YYYY-MM-DD` for today with the configured source. A nonzero exit means the scanner supplied no valid summary. Report the gap; proceed only from other adequate supplied or authorized local evidence, or ask for context. With no tracker, work from supplied context and local sources; ask only if there is too little evidence to write a truthful account. State the account's evidence coverage. Missing logs never mean a quiet day.
 
 Read `sources.local.md`, today's existing daily file, relevant preserved meeting sources, `priorities.md`, and relevant stakeholder and project context. Before project-specific assessment, read configured status under [linked-workspace handling](../../../docs/context-handling.md#linked-project-workspaces). Use the last three to five daily files for trajectory and revisit prior calls when relevant. Read authorized original session transcripts when a thin summary could change the judgment. Do not run a second mailbox discovery merely to close the day. Read tomorrow's calendar through an available connector for the configured account; explain material schedule gaps.
 

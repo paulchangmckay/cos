@@ -6,9 +6,9 @@ This is an optional, partial index. Unindexed people and projects remain usable.
 
 ## Read
 
-Use `python3 context.py find "name"` to locate indexed names. Use `python3 context.py show "exact name or id"` for incoming and outgoing relationships, their evidence, and relevant sections. Resolution requires an exact ID, name, or explicit alias. A partial name never selects a person automatically.
+Use `python3 scripts/context.py find "name"` to locate indexed names. Use `python3 scripts/context.py show "exact name or id"` for incoming and outgoing relationships, their evidence, and relevant sections. Resolution requires an exact ID, name, or explicit alias. A partial name never selects a person automatically.
 
-Use `python3 context.py section "exact name or id" "heading"` to read a relevant prose section. For unindexed context, search the existing project files and stakeholder overview. Follow profile links in `stakeholders.md` before reading or updating a migrated person.
+Use `python3 scripts/context.py section "exact name or id" "heading"` to read a relevant prose section. For unindexed context, search the existing project files and stakeholder overview. Follow profile links in `stakeholders.md` before reading or updating a migrated person.
 
 Relationship views are discovery aids. Read relevant prose and cited evidence before making a consequential assessment. Formal reporting stays in the sourced org map. A dated graph edge does not refresh a directory observation.
 
@@ -60,8 +60,8 @@ Keep the relationship once, on the source entity's canonical record. Incoming re
 
 After changing an indexed record:
 
-    python3 context.py index --write
-    python3 context.py validate
+    python3 scripts/context.py index --write
+    python3 scripts/context.py validate
 
 The generated view lives at `knowledge/context-index.md`. Validation checks identities, aliases, relationship vocabulary, evidence paths, dates, and relevant headings. It rejects stale generated output using a fingerprint of the canonical records. Query commands read current canonical records directly.
 

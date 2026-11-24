@@ -55,3 +55,6 @@ credentials.yml
 .mypy_cache/
 .coverage
 htmlcov/
+
+# Local tool state.
+.wolf/

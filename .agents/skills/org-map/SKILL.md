@@ -5,7 +5,7 @@ description: Build or update a sourced local map of reporting lines, team remits
 
 # Map org structure
 
-Follow [AGENTS.md](../../../AGENTS.md) and [WRITING.md](../../../WRITING.md), using relevant [date, source, and context rules](../../../docs/context-handling.md). Resolve project paths from the repository root. Company data stays in ignored `org/`; reusable instructions never contain employee records. Keep routine mapping mechanics out of chat.
+Follow [AGENTS.md](../../../AGENTS.md) and [writing style](../../../docs/writing-style.md), using relevant [date, source, and context rules](../../../docs/context-handling.md). Resolve project paths from the repository root. Company data stays in ignored `org/`; reusable instructions never contain employee records. Keep routine mapping mechanics out of chat.
 
 Use the scope in the user's request. For onboarding, a useful starting point is their manager chain, immediate peer group, and the adjacent functions they need to work with. A request merely to test directory access does not authorize creating a full employee roster.
 

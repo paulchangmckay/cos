@@ -5,7 +5,7 @@ description: Process requested meeting sources or notes into a strategic read an
 
 # Ingest context
 
-Help the user understand what the material changes, why it matters, and what deserves further thought or action. The chief-of-staff read is the purpose of the workflow. Source preservation and warranted context updates support it. Follow [AGENTS.md](../../../AGENTS.md) and [WRITING.md](../../../WRITING.md); paths below resolve from the repository root.
+Help the user understand what the material changes, why it matters, and what deserves further thought or action. The chief-of-staff read is the purpose of the workflow. Source preservation and warranted context updates support it. Follow [AGENTS.md](../../../AGENTS.md) and [writing style](../../../docs/writing-style.md); paths below resolve from the repository root.
 
 Use the supplied input or a source discovered through an explicitly enabled workflow in `sources.local.md`. If neither is present, ask for input. Ordinary thinking aloud does not select ingest or authorize saving; a request to process or capture sources can select it in natural language. Read only supplied material and relevant configured sources.
 
