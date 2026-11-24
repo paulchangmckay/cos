@@ -19,6 +19,8 @@ team/*
 !team/.gitkeep
 one-on-ones/*
 !one-on-ones/.gitkeep
+thinking/*
+!thinking/.gitkeep
 daily/*
 !daily/.gitkeep
 *.csv

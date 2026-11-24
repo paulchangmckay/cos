@@ -86,6 +86,7 @@ Read the relevant skill when the user's request calls for it. Ordinary language 
 - [eod](.agents/skills/eod/SKILL.md): save the day's strategic synthesis.
 - [okr-check](.agents/skills/okr-check/SKILL.md): assess outcomes against verified evidence.
 - [one-on-one](.agents/skills/one-on-one/SKILL.md): prepare for and capture one-on-ones with the three standard questions, and show who is due.
+- [think](.agents/skills/think/SKILL.md): run the 15-minute thinking block, save the answers verbatim, and reflect them against context.
 - [org-map](.agents/skills/org-map/SKILL.md): map sourced reporting lines and remits.
 
 For reusable framework changes, follow [CONTRIBUTING.md](CONTRIBUTING.md), use a task branch and reviewed pull request, and preserve unrelated changes. Run the required checks, including whitespace and changed skill frontmatter. Commit, publish, or merge only when authorized. See [README.md](README.md) for setup; missing context alone is no reason to begin an interview.

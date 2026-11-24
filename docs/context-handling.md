@@ -57,6 +57,7 @@ Create only useful files. Missing context is normal on a fresh clone. Templates 
 | `okrs/<quarter>.md` | OKRs with Jira and Confluence links | user, from supplied context or CSV |
 | `team/*.md` | Durable coaching themes and development patterns | chief of staff through authorized context workflows |
 | `one-on-ones/*.md` | Fixed three-question one-on-one log, open asks, and cadence per person | one-on-one skill; ingest for Gemini transcripts |
+| `thinking/*.md` | Verbatim answers to the four thinking-block questions, one file per day | think skill |
 | `daily/*.md` | Daily prose synthesis and real calls | eod writes; morning and eod revisit |
 | `org/*.md` | Sourced formal structure and documented remits | org-map |
 | `transcripts/` | Original sources, provenance, and local intake state | ingest, including configured morning intake |

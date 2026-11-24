@@ -38,13 +38,13 @@ AGENTS.md            Adviser posture and rules (Codex reads this)
 CLAUDE.md            Imports AGENTS.md for Claude Code
 README.md            This guide
 CONTRIBUTING.md      Contribution and sharing checks
-.agents/skills/      The seven workflows (onboard, morning, ingest, eod, okr-check, org-map, one-on-one)
+.agents/skills/      The eight workflows (onboard, morning, ingest, eod, okr-check, org-map, one-on-one, think)
 .github/workflows/   CI: tests and repository checks
 docs/                Reference guides (context handling, lenses, writing style, intake, structured context)
 scripts/             Python tools (context, meeting_intake, synthesis, check_repo)
 templates/           Starting files to copy into your local context
 tests/               Synthetic tests for the scripts
-daily/ okrs/ projects/ team/ one-on-ones/   Your private local context (git-ignored; only .gitkeep is tracked)
+daily/ okrs/ projects/ team/ one-on-ones/ thinking/   Your private local context (git-ignored; only .gitkeep is tracked)
 ```
 
 ## Everyday workflows
@@ -57,6 +57,7 @@ daily/ okrs/ projects/ team/ one-on-ones/   Your private local context (git-igno
 | Process notes, a transcript, or a supplied file | `$ingest` followed by the input |
 | Review OKRs for yourself, a person, or the team | `$okr-check self`, `$okr-check <person>`, `$okr-check team` |
 | Map reporting lines, team remits, or decision ownership | `$org-map` |
+| Run the 15-minute thinking block | `$think` |
 | Prep or capture a one-on-one with the three standard questions, or see who is due | `$one-on-one <name>`, `$one-on-one team` |
 
 Ordinary language can select these workflows too. Start conversationally. The adviser should develop a view from your context, disagree when useful, and leave a quiet day quiet. [Synthetic voice examples](docs/voice-examples.md) show the intended register. Adjust preferences in `self.md` as you learn what helps. Instructions can steer the voice; judge the result in your actual Codex setup.
@@ -86,6 +87,10 @@ Ignore rules cannot protect an already tracked file or prevent force-adding cont
 ## One-on-ones
 
 Every one-on-one uses the same three questions: what's working, what's frustrating, and what do you need from me? Capture works three ways: from a Gemini transcript through meeting intake, from notes you paste, or from a two-minute interview where the adviser asks you the questions afterwards. Records, open asks and cadence live in ignored `one-on-ones/`. See [one-on-ones](docs/one-on-ones.md) and run `python3 scripts/one_on_one.py roster` to see who is due.
+
+## Thinking block
+
+`$think` runs four fixed questions, one at a time, with no feedback until the end: what's going well, what's not, what am I avoiding, and what needs to change. Your answers are saved verbatim in ignored `thinking/`, then the adviser sets them against your files and names one decision for today. See [thinking block](docs/thinking-block.md).
 
 ## Optional Python tools
 

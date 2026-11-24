@@ -15,10 +15,10 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 PRIVATE_DIRS = {
-    'people', 'projects', 'team', 'one-on-ones', 'okrs', 'daily', 'org', 'knowledge',
+    'people', 'projects', 'team', 'one-on-ones', 'thinking', 'okrs', 'daily', 'org', 'knowledge',
     'transcripts', 'drafts', 'debriefs', 'activity-logs', '.codex', '.claude',
 }
-PLACEHOLDERS = {'projects/.gitkeep', 'team/.gitkeep', 'one-on-ones/.gitkeep', 'okrs/.gitkeep', 'daily/.gitkeep'}
+PLACEHOLDERS = {'projects/.gitkeep', 'team/.gitkeep', 'one-on-ones/.gitkeep', 'thinking/.gitkeep', 'okrs/.gitkeep', 'daily/.gitkeep'}
 PRIVATE_FILES = {
     'self.md', 'stakeholders.md', 'priorities.md', 'operating-model.md',
     'sources.local.md', 'performance-ratings-guide.md',

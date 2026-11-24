@@ -27,6 +27,10 @@ Respond to the user's opening with a considered view of what deserves attention.
 
 Use relevant [advisory lenses](../../../docs/advisory-lenses.md), including the risk gate before elevating concerns. Surface adoption, impact, or communication checks coming due when material. Coaching has no quota and should not repeat a recent nudge without new evidence. Develop a worthwhile observation rather than listing everything gathered. Ask when an answer changes the read, and let a clear day leave room to focus.
 
+## Thinking block
+
+If `thinking/` has no file for today, offer [think](../think/SKILL.md) once, in one sentence. If the user declines, continue and do not offer again that day. If today's entry exists, read it and start from what the user wrote; their own answers set the agenda.
+
 ## One-on-ones today
 
 When the calendar shows a one-on-one with someone who has a record in `one-on-ones/`, offer the [one-on-one](../one-on-one/SKILL.md) prep for that person. Run `python3 scripts/one_on_one.py roster --today YYYY-MM-DD` and mention overdue people only when it changes the day's choices.
