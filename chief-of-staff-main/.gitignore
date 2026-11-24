@@ -1,0 +1,57 @@
+# Private context stays local, including on a private repository.
+/stakeholders.md
+/priorities.md
+/operating-model.md
+/self.md
+/sources.local.md
+/performance-ratings-guide.md
+drafts/
+debriefs/
+transcripts/
+org/
+knowledge/
+activity-logs/
+projects/*
+!projects/.gitkeep
+okrs/*
+!okrs/.gitkeep
+team/*
+!team/.gitkeep
+daily/*
+!daily/.gitkeep
+*.csv
+.env
+.env.*
+.mcp.json
+.DS_Store
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Local Codex account configuration, sessions, and worktrees.
+.codex/config.toml
+.codex/auth.json
+.codex/sessions/
+.codex/worktrees/
+
+# Canonical local stakeholder records.
+people/
+
+# Local credentials and editor/runtime state.
+.codex/
+.claude/
+*.pem
+*.key
+*.p12
+*.pfx
+*.kdbx
+.netrc
+.npmrc
+credentials.json
+credentials.yaml
+credentials.yml
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/

@@ -1,4 +1,4 @@
-# Chief of staff for Codex
+# Chief of staff for Codex and Claude Code
 
 A local advisory workspace for strategic prioritization, coaching, meeting intake, and evidence-based OKR review. It is meant to feel like an intellectually engaged chief of staff who remembers the work, develops a view, and helps you keep immediate demands in perspective.
 
@@ -6,14 +6,14 @@ The repository contains the reusable framework. Your company context, personal n
 
 ## Start here
 
-Clone the private repository with your work GitHub access, then open the folder as a Codex project:
+Clone the private repository with your work GitHub access, then open the folder as a Codex project or in Claude Code:
 
 ```sh
 git clone https://github.com/zendesk/chief-of-staff.git
 cd chief-of-staff
 ```
 
-Codex reads [AGENTS.md](AGENTS.md) for the relationship and advisory posture, and discovers onboarding plus the five everyday workflows in `.agents/skills/`. [WRITING.md](WRITING.md) defines the voice. Detailed [context handling](docs/context-handling.md) and [advisory lenses](docs/advisory-lenses.md) are references for relevant tasks, rather than a manual to load for every conversation. See the [official skill documentation](https://learn.chatgpt.com/docs/build-skills) for project skill discovery. If updated skills do not appear in an existing chat, start a fresh project chat or restart Codex.
+Codex reads AGENTS.md directly; Claude Code reads [CLAUDE.md](CLAUDE.md), which imports it. Claude Code also needs a one-time skill link: `mkdir -p .claude && ln -sfn ../.agents/skills .claude/skills`. In Claude Code, write `/morning` where this guide says `$morning`. [AGENTS.md](AGENTS.md) sets the relationship and advisory posture. Both tools discover onboarding plus the five everyday workflows in `.agents/skills/`. [WRITING.md](WRITING.md) defines the voice. Detailed [context handling](docs/context-handling.md) and [advisory lenses](docs/advisory-lenses.md) are references for relevant tasks, rather than a manual to load for every conversation. See the [official skill documentation](https://learn.chatgpt.com/docs/build-skills) for project skill discovery. If updated skills do not appear in an existing chat, start a fresh project chat or restart Codex.
 
 You can get value without connectors or Python. Start a chat in this project:
 
