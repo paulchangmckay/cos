@@ -33,4 +33,6 @@ Apply the [writeback policy](../../../docs/context-handling.md#writeback-policy)
 
 Keep linked-project updates strategic. Reconcile indexed relationships alongside affected prose under the [structured-context rules](../../../docs/context-handling.md#structured-context-pilot). Coaching files hold lasting patterns, not isolated commitments. A no-change decision is valid. Keep any useful save receipt brief and after the substantive read; do not narrate routine mechanics.
 
+A transcript of a two-person meeting with a team member who has a record in `one-on-ones/` (or whom the user names as a direct report) is a one-on-one. Hand it to [one-on-one](../one-on-one/SKILL.md) in `gemini` capture mode after preserving the source. If you cannot tell, ask once.
+
 External action items stay in their existing trackers. Ingest authorizes no messages, Jira changes, or calendar writes. Do not write to `daily/*.md`; eod owns daily synthesis. Reusable framework changes follow [CONTRIBUTING.md](../../../CONTRIBUTING.md); ignored context updates need no Git commit.

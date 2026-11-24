@@ -17,6 +17,8 @@ okrs/*
 !okrs/.gitkeep
 team/*
 !team/.gitkeep
+one-on-ones/*
+!one-on-ones/.gitkeep
 daily/*
 !daily/.gitkeep
 *.csv

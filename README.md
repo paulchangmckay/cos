@@ -38,13 +38,13 @@ AGENTS.md            Adviser posture and rules (Codex reads this)
 CLAUDE.md            Imports AGENTS.md for Claude Code
 README.md            This guide
 CONTRIBUTING.md      Contribution and sharing checks
-.agents/skills/      The six workflows (onboard, morning, ingest, eod, okr-check, org-map)
+.agents/skills/      The seven workflows (onboard, morning, ingest, eod, okr-check, org-map, one-on-one)
 .github/workflows/   CI: tests and repository checks
 docs/                Reference guides (context handling, lenses, writing style, intake, structured context)
 scripts/             Python tools (context, meeting_intake, synthesis, check_repo)
 templates/           Starting files to copy into your local context
 tests/               Synthetic tests for the scripts
-daily/ okrs/ projects/ team/   Your private local context (git-ignored; only .gitkeep is tracked)
+daily/ okrs/ projects/ team/ one-on-ones/   Your private local context (git-ignored; only .gitkeep is tracked)
 ```
 
 ## Everyday workflows
@@ -57,6 +57,7 @@ daily/ okrs/ projects/ team/   Your private local context (git-ignored; only .gi
 | Process notes, a transcript, or a supplied file | `$ingest` followed by the input |
 | Review OKRs for yourself, a person, or the team | `$okr-check self`, `$okr-check <person>`, `$okr-check team` |
 | Map reporting lines, team remits, or decision ownership | `$org-map` |
+| Prep or capture a one-on-one with the three standard questions, or see who is due | `$one-on-one <name>`, `$one-on-one team` |
 
 Ordinary language can select these workflows too. Start conversationally. The adviser should develop a view from your context, disagree when useful, and leave a quiet day quiet. [Synthetic voice examples](docs/voice-examples.md) show the intended register. Adjust preferences in `self.md` as you learn what helps. Instructions can steer the voice; judge the result in your actual Codex setup.
 
@@ -81,6 +82,10 @@ Org mapping uses the configured employee directory for formal structure, Conflue
 **Company and personal content never belongs in Git, even in this private repository.** Context, source snapshots, org maps, intake state, cached knowledge, and generated debriefs are ignored. A clone does not back them up, and this framework configures no cloud sync.
 
 Ignore rules cannot protect an already tracked file or prevent force-adding content. Review the actual staged diff before contributing. [CONTRIBUTING.md](CONTRIBUTING.md) explains the sharing check and pull-request workflow. Use synthetic examples in reusable docs and tests.
+
+## One-on-ones
+
+Every one-on-one uses the same three questions: what's working, what's frustrating, and what do you need from me? Capture works three ways: from a Gemini transcript through meeting intake, from notes you paste, or from a two-minute interview where the adviser asks you the questions afterwards. Records, open asks and cadence live in ignored `one-on-ones/`. See [one-on-ones](docs/one-on-ones.md) and run `python3 scripts/one_on_one.py roster` to see who is due.
 
 ## Optional Python tools
 
