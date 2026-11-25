@@ -117,18 +117,20 @@ def dedupe(values, normalize):
 
 def merge(root: Path) -> dict:
     root = Path(root)
-    queries, urls, questions = [], [], []
+    queries, urls, questions, exhausted = [], [], [], []
     existing = root / STATE
     if existing.exists():
         saved = load_json(existing)
         queries += saved.get("executed_queries", [])
         urls += saved.get("visited_urls", [])
         questions += saved.get("open_questions", [])
+        exhausted += saved.get("exhausted_tools", [])
     for path in sorted((root / FINDINGS).glob("*.state.json")):
         data = load_json(path)
         queries += data.get("queries", [])
         urls += data.get("urls", [])
         questions += data.get("open_questions", [])
+        exhausted += data.get("exhausted_tools", [])
     for path in claim_files(root):
         for _, record, error in read_claims(path):
             if record and not error and record.get("read") == "opened" and record.get("source_url"):
@@ -137,6 +139,7 @@ def merge(root: Path) -> dict:
         "executed_queries": dedupe(queries, normalize_query),
         "visited_urls": sorted(dedupe(urls, normalize_url)),
         "open_questions": dedupe(questions, normalize_query),
+        "exhausted_tools": sorted(set(exhausted)),
     }
     existing.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
     return state
