@@ -15,10 +15,21 @@ Use `search_arxiv` and `search_ssrn` first for papers.
 
 ## Caps per sub-question
 
-- At most 4 searches and 4 page reads in total.
+- At most 4 searches and 6 page reads, counted across all tools combined. Stop when the budget is spent; record what is unresolved as a low-confidence claim or an open question, not another call.
+- Stop early only after the minimum below is met and two independent sources answer the sub-question.
 - Use Firecrawl only for a page steps 1 to 3 could not read (JS-heavy, blocked, PDF).
 - Never set `scrapeOptions` on a search. Never call crawl, agent, research, or interact tools.
 - Pass `question` to Jina `read_url` so only the relevant passages return.
+
+## Minimum tool mix
+
+The cap must never push a worker onto built-in tools alone. Unless every non-built-in tool is in `exhausted_tools`:
+
+- At least one search goes through a non-built-in tool (Jina, Tavily, or Firecrawl).
+- At least one page read goes through a non-built-in tool.
+- The cost order above decides which tool to use for the remaining calls. It does not excuse skipping the minimum.
+
+Cover three query types per sub-question, within the 4-search cap: an overview query, a primary-source or data query, and a counter-argument or criticism query.
 
 ## Failure handling
 

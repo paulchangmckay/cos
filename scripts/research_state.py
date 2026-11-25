@@ -5,6 +5,7 @@ Operates on a topic's artifacts directory (research-topics/<topic>/artifacts):
   findings/<sq-id>.jsonl        claim records, one JSON object per line
   findings/<sq-id>.state.json   a worker's queries, urls, and open questions
   state.json                    merged queries, visited urls, and open questions
+  report.md                     final report with [n] citations checked against claims
 """
 from __future__ import annotations
 
@@ -145,9 +146,9 @@ def merge(root: Path) -> dict:
     return state
 
 
-def stats(root: Path, today: date | None = None) -> dict:
+def stats(root: Path, today: date | None = None, stale_days: int = STALE_DAYS) -> dict:
     today = today or date.today()
-    out = {"total_claims": 0, "search_only": 0, "undated": 0, "stale_over_365_days": 0,
+    out = {"total_claims": 0, "search_only": 0, "undated": 0, "stale": 0, "stale_days": stale_days,
            "by_source_type": {}, "files": {}}
     for path in claim_files(Path(root)):
         types = set()
@@ -170,19 +171,69 @@ def stats(root: Path, today: date | None = None) -> dict:
                 age = (today - date.fromisoformat(str(published))).days
             except ValueError:
                 continue
-            if age > STALE_DAYS:
-                out["stale_over_365_days"] += 1
+            if age > stale_days:
+                out["stale"] += 1
         out["files"][path.name] = {"claims": count, "vendor_only": bool(count) and types == {"vendor"}}
     return out
+
+
+CITATION = re.compile(r"\[(\d+)\]")
+SOURCE_LINE = re.compile(r"^\[(\d+)\]\s+(https?://\S+)")
+FIGURE = re.compile(r"\d+(?:\.\d+)?\s?%|\b\d{2,}\b")
+
+
+def check_report(root: Path, report: str = "report.md") -> dict:
+    """Check numbered citations in a report against the claim records."""
+    path = Path(root) / report
+    if not path.exists():
+        return {"errors": [f"{report}: not found"], "warnings": []}
+    errors, warnings = [], []
+    known = set()
+    for claim_path in claim_files(Path(root)):
+        for _, record, error in read_claims(claim_path):
+            if record and not error and record.get("source_url"):
+                known.add(normalize_url(str(record["source_url"])))
+    body, sources, in_sources = [], {}, False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if re.match(r"^#{1,6}\s+Sources\b", line):
+            in_sources = True
+            continue
+        if in_sources and line.startswith("#"):
+            in_sources = False
+        match = SOURCE_LINE.match(line) if in_sources else None
+        if match:
+            sources[match.group(1)] = match.group(2)
+        elif not in_sources:
+            body.append(line)
+    for number, url in sorted(sources.items(), key=lambda item: int(item[0])):
+        if normalize_url(url) not in known:
+            errors.append(f"[{number}] {url}: not found in any claim record")
+    text = "\n".join(body)
+    cited = set(CITATION.findall(text))
+    for number in sorted(cited - set(sources), key=int):
+        errors.append(f"[{number}]: cited but has no entry in Sources")
+    for number in sorted(set(sources) - cited, key=int):
+        warnings.append(f"[{number}]: listed in Sources but never cited")
+    for block in re.split(r"\n\s*\n", text):
+        block = block.strip()
+        if not block or block.startswith("#") or CITATION.search(block):
+            continue
+        figure = FIGURE.search(block)
+        if figure:
+            warnings.append(f"uncited figure '{figure.group(0)}': {block[:60]}")
+    return {"errors": errors, "warnings": warnings}
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
     for name, text in (("validate", "check claim records"), ("merge", "merge worker state into state.json"),
-                       ("stats", "summarize source quality")):
+                       ("stats", "summarize source quality"), ("check-report", "check report citations")):
         p = sub.add_parser(name, help=text)
         p.add_argument("artifacts", type=Path, help="research-topics/<topic>/artifacts")
+        if name == "stats":
+            p.add_argument("--as-of", type=date.fromisoformat, default=None, help="today's date, YYYY-MM-DD")
+            p.add_argument("--stale-days", type=int, default=STALE_DAYS, help="claims older than this are stale")
     args = parser.parse_args(argv)
     try:
         if args.command == "validate":
@@ -195,7 +246,15 @@ def main(argv=None) -> int:
             state = merge(args.artifacts)
             print(json.dumps({k: len(v) for k, v in state.items()}))
             return 0
-        print(json.dumps(stats(args.artifacts), indent=2))
+        if args.command == "check-report":
+            result = check_report(args.artifacts)
+            for line in result["errors"]:
+                print(f"error: {line}")
+            for line in result["warnings"]:
+                print(f"warning: {line}")
+            print("ok" if not result["errors"] else f"{len(result['errors'])} error(s)")
+            return 1 if result["errors"] else 0
+        print(json.dumps(stats(args.artifacts, args.as_of, args.stale_days), indent=2))
         return 0
     except (OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
