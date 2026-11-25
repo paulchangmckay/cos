@@ -6,6 +6,7 @@ Operates on a topic's artifacts directory (research-topics/<topic>/artifacts):
   findings/<sq-id>.state.json   a worker's queries, urls, and open questions
   state.json                    merged queries, visited urls, and open questions
   report.md                     final report with [n] citations checked against claims
+  brief.md                      decision brief beside the report, checked by check-brief
 """
 from __future__ import annotations
 
@@ -224,11 +225,53 @@ def check_report(root: Path, report: str = "report.md") -> dict:
     return {"errors": errors, "warnings": warnings}
 
 
+BRIEF_SECTIONS = ("Recommendation", "What we found", "What we don't know", "What would change this",
+                  "Next steps", "Sources")
+BRIEF_WORD_LIMIT = 500
+PILLARS = (2, 4)
+YEAR = re.compile(r"^(19|20)\d\d$")
+
+
+def check_brief(root: Path, brief: str = "brief.md") -> dict:
+    """Check a decision brief: citations, required sections, pillar count, length, and title figures."""
+    path = Path(root) / brief
+    if not path.exists():
+        return {"errors": [f"{brief}: not found"], "warnings": []}
+    result = check_report(root, brief)
+    errors, warnings = list(result["errors"]), list(result["warnings"])
+    text = path.read_text(encoding="utf-8")
+    headings = [line.lstrip("#").strip() for line in text.splitlines() if re.match(r"^##\s", line)]
+    for section in BRIEF_SECTIONS:
+        if section not in headings:
+            errors.append(f"missing section '## {section}'")
+    body = re.split(r"^##\s+Sources\b", text, maxsplit=1, flags=re.M)[0]
+    titles = [line.lstrip("#").strip() for line in body.splitlines() if re.match(r"^###\s", line)]
+    low, high = PILLARS
+    if not low <= len(titles) <= high:
+        errors.append(f"{len(titles)} pillar title(s); expected {low} to {high}")
+    words = len(body.split())
+    if words > BRIEF_WORD_LIMIT:
+        warnings.append(f"{words} words before Sources; aim for {BRIEF_WORD_LIMIT} or fewer")
+    evidence = " ".join(
+        f"{record.get('claim', '')} {record.get('evidence', '')}"
+        for claim_path in claim_files(Path(root))
+        for _, record, error in read_claims(claim_path) if record and not error
+    ).replace(" %", "%")
+    for title in titles:
+        for figure in FIGURE.findall(title):
+            figure = figure.replace(" ", "")
+            if YEAR.match(figure.rstrip("%")) or figure in evidence:
+                continue
+            errors.append(f"figure '{figure}' in title appears in no claim record: {title[:60]}")
+    return {"errors": errors, "warnings": warnings}
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
     for name, text in (("validate", "check claim records"), ("merge", "merge worker state into state.json"),
-                       ("stats", "summarize source quality"), ("check-report", "check report citations")):
+                       ("stats", "summarize source quality"), ("check-report", "check report citations"),
+                       ("check-brief", "check the decision brief")):
         p = sub.add_parser(name, help=text)
         p.add_argument("artifacts", type=Path, help="research-topics/<topic>/artifacts")
         if name == "stats":
@@ -246,8 +289,8 @@ def main(argv=None) -> int:
             state = merge(args.artifacts)
             print(json.dumps({k: len(v) for k, v in state.items()}))
             return 0
-        if args.command == "check-report":
-            result = check_report(args.artifacts)
+        if args.command in ("check-report", "check-brief"):
+            result = (check_brief if args.command == "check-brief" else check_report)(args.artifacts)
             for line in result["errors"]:
                 print(f"error: {line}")
             for line in result["warnings"]:

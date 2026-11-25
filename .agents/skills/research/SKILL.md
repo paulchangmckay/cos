@@ -7,7 +7,7 @@ description: Run a multi-agent research loop on a topic. Plans sub-questions, re
 
 The main session supervises. Workers, critic, and synthesizer are subagents. Subagents cannot ask the user questions or start other subagents, so every step below that needs either stays in the main session. Follow [AGENTS.md](../../../AGENTS.md). Paths resolve from the repository root.
 
-Agents live in `.claude/agents/`: `researcher`, `research-critic`, `research-synthesizer`. Skip this loop for a single quick lookup; send it straight to `researcher`.
+Agents live in `.claude/agents/`: `researcher`, `research-critic`, `research-synthesizer`, `research-briefer`. Skip this loop for a single quick lookup; send it straight to `researcher`.
 
 ## Layout
 
@@ -20,7 +20,8 @@ Everything lands under `research-topics/<topic>/`, which is git-ignored. Create 
 - `artifacts/stats.json`: source-quality counts from `scripts/research_state.py`
 - `artifacts/review.md`: critic output
 - `artifacts/audit.md`: statements the critic removed or changed in the final audit
-- `artifacts/report.md`: final synthesis
+- `artifacts/report.md`: final synthesis, the evidence ledger
+- `artifacts/brief.md`: one-page decision brief that sits beside the report
 - `notes/`: the user's own thoughts. No agent writes here.
 
 ## Steps
@@ -34,7 +35,8 @@ Everything lands under `research-topics/<topic>/`, which is git-ignored. Create 
 6. **Synthesize.** Launch `research-synthesizer` with the topic slug. It reads only `plan.md`, `findings/*.jsonl`, and `review.md`, and writes `artifacts/report.md` with numbered `[n]` citations.
    If the synthesizer's write to `report.md` is rejected, it returns the full report text instead. Save that text verbatim to `artifacts/report.md` yourself. Do not ask it to try another path.
    Then run `python3 scripts/research_state.py check-report research-topics/<topic>/artifacts`. Launch `research-critic` once in audit mode with that output. It strips statements that no claim record supports and writes `audit.md`. If its rewrite of `report.md` is rejected, it returns exact old and new text for each edit. Apply those edits yourself, then mark them applied in `audit.md`. Run `check-report` again. Do not audit more than once; report any remaining errors to the user.
-7. **Report to the user.** Give the bottom line, how strong the evidence is, what stays unverified, and the path to the report. Offer to update `research-topics/<topic>/README.md`. Update it only after the user agrees, since it holds their current position.
+7. **Brief.** After the audit, launch `research-briefer` with the topic slug. It reads the README, plan, audited report, review, audit, and findings, and writes `artifacts/brief.md`: a decision brief that sits beside the report and does not replace it. If its write is rejected, save the returned text verbatim yourself. Run `python3 scripts/research_state.py check-brief research-topics/<topic>/artifacts`. Errors mean a missing section, a bad citation, a pillar count outside 2 to 4, or a number in a title that no claim record contains. Send the briefer back once to fix them; if errors remain, report them to the user. Skip this step when the user wants only the report.
+8. **Report to the user.** Give the bottom line, how strong the evidence is, what stays unverified, and the paths to the report and the brief. Offer to update `research-topics/<topic>/README.md`. Update it only after the user agrees, since it holds their current position.
 
 ## Rules
 

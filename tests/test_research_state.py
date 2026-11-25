@@ -230,5 +230,81 @@ class CheckReportTests(ArtifactsCase):
         self.assertTrue(result["errors"])
 
 
+BRIEF_OK = """# Topic: decision brief
+Date: 2026-06-01
+
+## Recommendation
+Do the small thing first [1]. Skip the large one [2].
+
+## What we found
+### Clicks fell 40% when an overview appeared (confidence: medium)
+- Overviews cut outbound clicks [1].
+So what: protect organic reach first.
+
+### Referrals stay small next to search (confidence: low)
+- Few visits come from assistants [2].
+So what: size any budget from your own logs.
+
+## What we don't know
+- No independent pricing data.
+
+## What would change this
+- A live replication of the study.
+
+## Next steps
+- Check analytics for assistant referrals. Owner to assign. Date to set.
+
+## Sources
+[1] https://example.com/a (primary)
+[2] https://example.com/b (secondary)
+"""
+
+
+class CheckBriefTests(ArtifactsCase):
+    def setUp(self):
+        super().setUp()
+        self.write_claims("sq1.jsonl", [
+            claim(source_url="https://example.com/a", claim="Clicks fell 40% with an overview"),
+            claim(source_url="https://www.example.com/b/", evidence="about 1% of visits"),
+        ])
+
+    def brief(self, text):
+        (self.root / "brief.md").write_text(text)
+        return research_state.check_brief(self.root)
+
+    def test_clean_brief_has_no_errors(self):
+        result = self.brief(BRIEF_OK)
+        self.assertEqual(result["errors"], [])
+
+    def test_missing_section_is_error(self):
+        result = self.brief(BRIEF_OK.replace("## Next steps\n- Check analytics for assistant referrals. Owner to assign. Date to set.\n\n", ""))
+        self.assertTrue(any("Next steps" in e for e in result["errors"]))
+
+    def test_one_pillar_is_error(self):
+        text = BRIEF_OK.replace("### Referrals stay small next to search (confidence: low)\n- Few visits come from assistants [2].\nSo what: size any budget from your own logs.\n\n", "")
+        result = self.brief(text)
+        self.assertTrue(any("pillar" in e for e in result["errors"]))
+
+    def test_title_figure_missing_from_claims_is_error(self):
+        result = self.brief(BRIEF_OK.replace("fell 40%", "fell 55%"))
+        self.assertTrue(any("55%" in e for e in result["errors"]))
+
+    def test_year_in_title_is_not_a_figure(self):
+        result = self.brief(BRIEF_OK.replace("Clicks fell 40%", "Clicks fell 40% by 2026"))
+        self.assertEqual(result["errors"], [])
+
+    def test_bad_citation_is_error(self):
+        result = self.brief(BRIEF_OK.replace("https://example.com/b", "https://other.example.org/z"))
+        self.assertTrue(any("other.example.org" in e for e in result["errors"]))
+
+    def test_long_brief_is_warning(self):
+        padding = " ".join(["word"] * 520)
+        result = self.brief(BRIEF_OK.replace("## What we don't know", f"{padding}\n\n## What we don't know"))
+        self.assertTrue(any("words" in w for w in result["warnings"]))
+
+    def test_missing_brief_is_error(self):
+        self.assertTrue(research_state.check_brief(self.root)["errors"])
+
+
 if __name__ == "__main__":
     unittest.main()
