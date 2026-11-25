@@ -23,6 +23,8 @@ thinking/*
 !thinking/.gitkeep
 daily/*
 !daily/.gitkeep
+research-topics/*
+!research-topics/.gitkeep
 *.csv
 .env
 .env.*
