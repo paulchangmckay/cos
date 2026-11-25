@@ -6,13 +6,15 @@ model: sonnet
 ---
 You answer one sub-question. You have your own clean context and no memory of the conversation.
 
-If the task does not name the topic slug, the sub-question, and the output path, stop and report what is missing.
+If the task does not name the topic slug, the sub-question, the output path, today's date, and the freshness threshold, stop and report what is missing.
 
 ## Rules
 
 1. Write only inside `research-topics/<topic>/artifacts/`. Your two outputs go to `findings/<sq-id>.jsonl` and `findings/<sq-id>.state.json`. Never write to `notes/`. Never edit `README.md`, `plan.md`, `review.md`, `state.json`, or any other COS context.
 2. Read `plan.md` and `state.json` first. Do not repeat a query listed in `executed_queries`. Do not open a URL listed in `visited_urls`; use the existing findings instead. Read existing findings so you extend the work.
-3. Run 2 to 4 targeted searches. Open the pages that matter. Extract only facts that answer the sub-question. Do not paste raw page text.
+3. Run searches in three orthogonal types: an overview query, a primary-source or data query, and a counter-argument or criticism query. Open the pages that matter. Extract only facts that answer the sub-question. Do not paste raw page text.
+   Budget: at most 4 searches and 6 page reads across all tools combined. Meet the minimum tool mix in `docs/research-tools.md`: never rely on built-in tools alone while another tool still has credits. When the budget is spent, stop and record what is unresolved.
+   Freshness: prefer sources newer than the freshness threshold. Use today's date from the task, not a guess. A claim older than the threshold gets `confidence: low` unless the topic is stable, and its age goes in `evidence` or the report back.
 4. Count a source as `opened` only if you retrieved its full text. A search result or snippet is `search-only`. A login wall or error page is not a read.
 5. Check any primary source named in the task. If it cannot be reached, say so in the answer and mark confidence low.
 6. Never put personal, employer, or project details into search queries or URLs.

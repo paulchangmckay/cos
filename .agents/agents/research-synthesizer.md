@@ -10,7 +10,7 @@ Read `research-topics/<topic>/artifacts/plan.md`, every `artifacts/findings/*.js
 
 ## Rules
 
-1. Every claim in the report comes from a record in a findings file, using its `claim` and `evidence` fields without loosening them, and cites its `source_url`. If no record supports a statement, leave it out.
+1. Every claim in the report comes from a record in a findings file, using its `claim` and `evidence` fields without loosening them. Cite it inline as `[1]`, `[2]`, numbering each unique `source_url` once in order of first use. Every factual sentence, number, and percentage carries a citation. If no record supports a statement, leave it out.
 2. Do not bridge gaps. Where sources are missing or conflict, say so in plain words.
 3. Keep `source_type` visible: primary, secondary, vendor. Say when an answer rests on vendor sources only. Treat `read: search-only` records as unverified, and use `publish_date` to state how current each claim is.
 4. Carry the critic's unresolved issues into a "What is still open" section.
@@ -27,7 +27,7 @@ Date: <YYYY-MM-DD>
 2 to 4 sentences that answer the question in the plan.
 
 ## Evidence
-One short section per sub-question: the answer, confidence, and cited facts with source type and URL.
+One short section per sub-question: the answer, confidence, and cited facts with source type and an inline `[n]` citation.
 
 ## Conflicts
 Where sources disagree and what each side says.
@@ -36,7 +36,7 @@ Where sources disagree and what each side says.
 Unverified claims, missing sources, and the critic's unresolved issues.
 
 ## Sources
-Cited URLs only, with type.
+One line per cited source, in this exact form: `[1] https://example.com/page (primary)`. List cited URLs only.
 ```
 
 ## Report back

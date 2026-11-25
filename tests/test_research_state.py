@@ -150,7 +150,8 @@ class StatsTests(ArtifactsCase):
         self.assertEqual(stats["total_claims"], 7)
         self.assertEqual(stats["search_only"], 1)
         self.assertEqual(stats["undated"], 1)
-        self.assertEqual(stats["stale_over_365_days"], 1)
+        self.assertEqual(stats["stale"], 1)
+        self.assertEqual(stats["stale_days"], 365)
         self.assertEqual(stats["by_source_type"]["vendor"], 3)
         by_file = stats["files"]
         self.assertEqual(by_file["sq1.jsonl"]["vendor_only"], False)
@@ -160,6 +161,67 @@ class StatsTests(ArtifactsCase):
         self.write_claims("sq1.jsonl", [claim(source_type="vendor"), claim(source_type="vendor")])
         stats = research_state.stats(self.root, TODAY)
         self.assertTrue(stats["files"]["sq1.jsonl"]["vendor_only"])
+
+
+class FreshnessThresholdTests(ArtifactsCase):
+    def test_stale_days_threshold_is_configurable(self):
+        self.write_claims("sq1.jsonl", [claim(publish_date="2026-02-01"), claim(publish_date="2026-05-01")])
+        strict = research_state.stats(self.root, TODAY, stale_days=60)
+        loose = research_state.stats(self.root, TODAY, stale_days=365)
+        self.assertEqual(strict["stale"], 1)
+        self.assertEqual(strict["stale_days"], 60)
+        self.assertEqual(loose["stale"], 0)
+
+
+REPORT_OK = """# Topic: research report
+
+## Bottom line
+Clicks fell 38% on triggered queries [1]. Source overlap is low [2].
+
+## Sources
+[1] https://example.com/a (primary)
+[2] https://example.com/b (secondary)
+"""
+
+
+class CheckReportTests(ArtifactsCase):
+    def setUp(self):
+        super().setUp()
+        self.write_claims("sq1.jsonl", [
+            claim(source_url="https://example.com/a"),
+            claim(source_url="https://www.example.com/b/"),
+        ])
+
+    def report(self, text):
+        (self.root / "report.md").write_text(text)
+        return research_state.check_report(self.root)
+
+    def test_clean_report_has_no_errors_or_warnings(self):
+        result = self.report(REPORT_OK)
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(result["warnings"], [])
+
+    def test_citation_without_source_entry_is_error(self):
+        result = self.report(REPORT_OK.replace("[2] https://example.com/b (secondary)\n", "").replace("[2]", "[3]"))
+        self.assertTrue(any("[3]" in e for e in result["errors"]))
+
+    def test_source_url_not_in_claims_is_error(self):
+        result = self.report(REPORT_OK.replace("https://example.com/b", "https://other.example.org/z"))
+        self.assertTrue(any("other.example.org" in e for e in result["errors"]))
+
+    def test_uncited_source_is_warning(self):
+        result = self.report(REPORT_OK.replace(" Source overlap is low [2].", " Source overlap is low."))
+        self.assertEqual(result["errors"], [])
+        self.assertTrue(any("[2]" in w for w in result["warnings"]))
+
+    def test_paragraph_with_figure_and_no_citation_is_warning(self):
+        text = REPORT_OK.replace("## Sources", "Zero-click rose to 83% last year.\n\n## Sources")
+        result = self.report(text)
+        self.assertTrue(any("83%" in w for w in result["warnings"]))
+
+    def test_missing_report_is_error(self):
+        result = research_state.check_report(self.root)
+        self.assertTrue(result["errors"])
 
 
 if __name__ == "__main__":

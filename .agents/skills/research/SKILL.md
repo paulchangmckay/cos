@@ -19,18 +19,20 @@ Everything lands under `research-topics/<topic>/`, which is git-ignored. Create 
 - `artifacts/state.json`: merged queries, visited URLs, and open questions
 - `artifacts/stats.json`: source-quality counts from `scripts/research_state.py`
 - `artifacts/review.md`: critic output
+- `artifacts/audit.md`: statements the critic removed or changed in the final audit
 - `artifacts/report.md`: final synthesis
 - `notes/`: the user's own thoughts. No agent writes here.
 
 ## Steps
 
 1. **Clarify.** Read `research-topics/<topic>/README.md` if it exists. If the request is ambiguous on scope, audience, or decision it serves, ask the user up to three short questions. If they are unavailable, write explicit assumptions into the plan instead.
-2. **Plan.** Write `artifacts/plan.md`: the question, the decision it informs, assumptions, and 3 to 6 sub-questions with ids `sq1`, `sq2`, and so on. Note any primary sources to verify. Show the plan to the user and wait for a yes unless they said to proceed.
-3. **Research.** Launch one `researcher` per sub-question in a single parallel call. Give each: topic slug, its sub-question id and text, and any primary sources to check. Workers write `findings/<sq-id>.jsonl` and `findings/<sq-id>.state.json` and return about 100 words. Do not read raw pages in the main session. Give workers disjoint sub-questions; workers in one wave cannot see each other's queries.
+2. **Plan.** Write `artifacts/plan.md`: the question, the decision it informs, assumptions, and 3 to 6 sub-questions with ids `sq1`, `sq2`, and so on. Note any primary sources to verify. Record today's date and a freshness threshold in days (default 365; use a shorter one for fast-moving topics). Set budgets: at most 6 sub-questions and 2 waves in total. Show the plan to the user and wait for a yes unless they said to proceed.
+3. **Research.** Launch one `researcher` per sub-question in a single parallel call. Give each: topic slug, its sub-question id and text, today's date, the freshness threshold, and any primary sources to check. Workers follow the budgets and tool mix in `docs/research-tools.md`; do not tell them to prefer built-in tools. Workers write `findings/<sq-id>.jsonl` and `findings/<sq-id>.state.json` and return about 100 words. Do not read raw pages in the main session. Give workers disjoint sub-questions; workers in one wave cannot see each other's queries.
    After the wave, run `python3 scripts/research_state.py validate research-topics/<topic>/artifacts`. If it reports problems, send those workers back to fix their files. Then run `python3 scripts/research_state.py merge research-topics/<topic>/artifacts` so the next wave can skip visited URLs and repeated queries.
-4. **Critique.** Run `python3 scripts/research_state.py stats research-topics/<topic>/artifacts > research-topics/<topic>/artifacts/stats.json`. Then launch `research-critic` with the topic slug. It reads the plan, stats, state, and claim records and writes `artifacts/review.md` with contradictions, stale data, uncited claims, missing perspectives, and a list of targeted follow-up queries.
+4. **Critique.** Run `python3 scripts/research_state.py stats research-topics/<topic>/artifacts --as-of <today> --stale-days <threshold> > research-topics/<topic>/artifacts/stats.json`. Then launch `research-critic` with the topic slug and today's date, in review mode. It reads the plan, stats, state, and claim records and writes `artifacts/review.md` with contradictions, stale data, uncited claims, missing perspectives, and a list of targeted follow-up queries.
 5. **Second wave, once.** If the review lists gaps that matter to the question, launch targeted `researcher` runs for those only, then validate, merge, recompute stats, and rerun the critic. Do not loop a third time. List what remains open in the report.
-6. **Synthesize.** Launch `research-synthesizer` with the topic slug. It reads only `plan.md`, `findings/*.jsonl`, and `review.md`, and writes `artifacts/report.md`.
+6. **Synthesize.** Launch `research-synthesizer` with the topic slug. It reads only `plan.md`, `findings/*.jsonl`, and `review.md`, and writes `artifacts/report.md` with numbered `[n]` citations.
+   Then run `python3 scripts/research_state.py check-report research-topics/<topic>/artifacts`. Launch `research-critic` once in audit mode with that output. It strips statements that no claim record supports and writes `audit.md`. Run `check-report` again. Do not audit more than once; report any remaining errors to the user.
 7. **Report to the user.** Give the bottom line, how strong the evidence is, what stays unverified, and the path to the report. Offer to update `research-topics/<topic>/README.md`. Update it only after the user agrees, since it holds their current position.
 
 ## Rules
@@ -39,3 +41,4 @@ Everything lands under `research-topics/<topic>/`, which is git-ignored. Create 
 - Keep personal, employer, and project details out of every subagent prompt that could reach a search query.
 - Publishing a page or sharing the report is a separate request from the user.
 - Do not write to `notes/`.
+- Stop at the budgets in the plan. Do not start a third wave or add sub-questions mid-run; list what remains open.
