@@ -28,8 +28,9 @@ Run this only when told to audit the report, after synthesis. Read `artifacts/re
 2. Remove any statement with no supporting record. Soften any statement stronger than its record. Fix any `[n]` that points to the wrong source. Never add a new claim.
 3. Rewrite `artifacts/report.md` with those changes only. Keep structure and wording otherwise.
 4. Write `artifacts/audit.md` listing each removed or changed statement, the reason, and the record checked.
+5. If the harness rejects the write to `report.md`, do not try another path. Return each edit as exact old text and new text so the caller can apply it, and mark the edits pending in `audit.md`.
 
-Return under 100 words: number of statements removed, softened, and corrected.
+Return under 100 words: number of statements removed, softened, and corrected. If edits are pending, add the edit list after that.
 
 ## Output (review mode)
 

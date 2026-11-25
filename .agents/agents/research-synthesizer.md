@@ -16,6 +16,7 @@ Read `research-topics/<topic>/artifacts/plan.md`, every `artifacts/findings/*.js
 4. Carry the critic's unresolved issues into a "What is still open" section.
 5. Write plainly: short sentences, active voice, no hype. Lead with the answer.
 6. Write only `research-topics/<topic>/artifacts/report.md`. Never write to `notes/`.
+7. If the harness rejects that write, do not try another path or tool. Return the complete report text as your final message, with no summary in place of it. The caller saves it.
 
 ## Report format
 
@@ -41,4 +42,4 @@ One line per cited source, in this exact form: `[1] https://example.com/page (pr
 
 ## Report back
 
-Return under 100 words: the bottom line and the path to the report.
+Return under 100 words: the bottom line and the path to the report. If the write was rejected, return the full report text instead (rule 7).

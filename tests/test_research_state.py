@@ -63,6 +63,12 @@ class ValidateTests(ArtifactsCase):
         self.write_claims("sq1.jsonl", [claim(), claim(publish_date=None, read="search-only")])
         self.assertEqual(research_state.validate(self.root), [])
 
+    def test_second_wave_ids_with_letter_suffix_validate_beside_wave_one(self):
+        self.write_claims("sq2.jsonl", [claim()])
+        self.write_claims("sq2b.jsonl", [claim(source_url="https://example.com/follow-up")])
+        self.write_state("sq2b.state.json", {"queries": ["follow up"], "urls": [], "open_questions": []})
+        self.assertEqual(research_state.validate(self.root), [])
+
     def test_bad_json_reports_file_and_line(self):
         self.write_claims("sq1.jsonl", [claim()], raw_lines=["{not json"])
         errors = research_state.validate(self.root)
